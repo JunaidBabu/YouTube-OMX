@@ -56,12 +56,14 @@ def youtube_search(options):
 #  print videoids
 
   for item in videoids:
-    output = subprocess.check_output(["youtube-dl", "-g", "cn7AFhVEI5o"])
+    output = subprocess.check_output(["youtube-dl", "-g", item])
     videourls.append(output)
+    print output
+    subprocess.call(["omxplayer", ''+output.strip()+''])
 
-    subprocess.call(["omxplayer", "\"cn7AFhVEI5o\""])
-    #print output
-    #print item
+    #subprocess.call(["omxplayer", "https://r1---sn-nvoxu-ioqs.googlevideo.com/videoplayback?sver=3&ipbits=0&requiressl=yes&mws=yes&mt=1401861171&itag=22&upn=FiObVMak7zc&fexp=913434%2C923341%2C930008&sparams=id%2Cip%2Cipbits%2Citag%2Cratebypass%2Crequiressl%2Csource%2Cupn%2Cexpire&id=o-AJHpxCsQOgHCXKsRRUoViw11pnWJZukx6hhCqGBTHOGj&ms=au&mv=m&ip=182.171.224.146&signature=05B3BD5D78057A69BD2049D47E7E6188D44BFB07.E4878E8D4EF4362000095B27F3F440279848FE8B&key=yt5&source=youtube&ratebypass=yes&expire=1401882107"])
+
+    #print print item
 
   print videourls
 
