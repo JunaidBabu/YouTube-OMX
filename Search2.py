@@ -57,16 +57,26 @@ def youtube_search(options):
   
 #  print videoids
 
-  for item in videoids:
-    output = subprocess.check_output(["youtube-dl", "-g", item])
-    videourls.append(output)
-    print output
-    subprocess.call(["omxplayer", ''+output.strip()+''])
+  def captureURL():
+      for item in videoids[:3]:
+        output = subprocess.check_output(["youtube-dl", "-g", item])
+        videourls.append(output.strip())
+        print output
+  #captureURL()
+  p1=Process(target=captureURL)
+  p1.start()
+  firsturl=subprocess.check_output(["youtube-dl", "-g", videoids[0]])
+  subprocess.call(["omxplayer", ''+firsturl+''])
+  
+ 
+  for url in videourls:    
+    subprocess.call(["omxplayer", ''+url+''])
 
-  #for url in videourls:
+  p1.join()
+
     
 
-  print videourls
+
 
 if __name__ == "__main__":
   argparser.add_argument("--q", help="Search term", default="Google")
