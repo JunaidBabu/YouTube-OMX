@@ -30,6 +30,7 @@ def youtube_search(options):
   playlists = []
 
   videoids =[]
+  videourls =[]
 
   # Add each result to the appropriate list, and then display the lists of
   # matching videos, channels, and playlists.
@@ -51,13 +52,18 @@ def youtube_search(options):
   print "Channels:\n", "\n".join(channels), "\n"
   print "Playlists:\n", "\n".join(playlists), "\n"
 
-  output = subprocess.check_output("ls")
-  print output
+  
 #  print videoids
 
   for item in videoids:
-    print item
+    output = subprocess.check_output(["youtube-dl", "-g", "cn7AFhVEI5o"])
+    videourls.append(output)
 
+    subprocess.call(["omxplayer", "\"cn7AFhVEI5o\""])
+    #print output
+    #print item
+
+  print videourls
 
 if __name__ == "__main__":
   argparser.add_argument("--q", help="Search term", default="Google")
