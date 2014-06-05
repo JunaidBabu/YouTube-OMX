@@ -6,7 +6,8 @@ from oauth2client.tools import argparser
 
 from multiprocessing import Process
 import subprocess
-
+import time
+import pickle
 # Set DEVELOPER_KEY to the API key value from the APIs & auth > Registered apps
 # tab of
 #   https://cloud.google.com/console
@@ -14,7 +15,8 @@ import subprocess
 DEVELOPER_KEY = "AIzaSyDl7EshuUtJHzy-_IGJN5figdVQzWFVgAE"
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
-
+current=0
+videourls = []
 def youtube_search(options):
   youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
     developerKey=DEVELOPER_KEY)
@@ -32,7 +34,7 @@ def youtube_search(options):
   playlists = []
 
   videoids =[]
-  videourls =[]
+  #videourls =[]
 
   # Add each result to the appropriate list, and then display the lists of
   # matching videos, channels, and playlists.
@@ -51,30 +53,61 @@ def youtube_search(options):
                                     search_result["id"]["playlistId"]))
 
   print "Videos:\n", "\n".join(videos), "\n"
-  print "Channels:\n", "\n".join(channels), "\n"
-  print "Playlists:\n", "\n".join(playlists), "\n"
-
   
-#  print videoids
-
+  #print videoids
+  #current=0;
   def captureURL():
-      for item in videoids[:3]:
+      global videourls
+      print "capture starting"
+      for item in videoids:  #[:3]:
+        #if current==0:
+	#    continue
+        global videourls
         output = subprocess.check_output(["youtube-dl", "-g", item])
         videourls.append(output.strip())
-        print output
+        with open('list', 'wb') as f:
+	    pickle.dump(videourls, f)
+        print str(current)+" "+str(videourls)
   #captureURL()
+
+  print "Before process"
   p1=Process(target=captureURL)
   p1.start()
-  firsturl=subprocess.check_output(["youtube-dl", "-g", videoids[0]])
-  subprocess.call(["omxplayer", ''+firsturl+''])
+  print "After sta\n\nrt"
   
- 
-  for url in videourls:    
-    subprocess.call(["omxplayer", ''+url+''])
+  
+
+  #for url in videourls:    
+  def Playvid():
+   while current<21: 
+     global current
+     global videourls
+     print "Current: "+str(current)
+     print videos[current]
+     print videourls
+     try:
+       video_urls = []
+       with open('list', 'rb') as f:
+	  video_urls=pickle.load(f)
+       subprocess.call(["omxplayer", ''+video_urls[current]+''])
+       current=current+1
+     except Exception,e:
+       print "Some error"+str(e)
+       time.sleep(5) 
+
+
+  
+  #firsturl=subprocess.check_output(["youtube-dl", "-g", videoids[0]])
+  #print firsturl
+  #videourls.append(firsturl.strip())
+  #subprocess.call(["omxplayer", ''+firsturl.strip()+''])
+  
+  p2=Process(target=Playvid)
+  p2.start()
+
 
   p1.join()
-
-    
+  p2.join()  
 
 
 
