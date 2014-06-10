@@ -79,8 +79,8 @@ def youtube_search(options):
 
   #for url in videourls:    
   def Playvid():
+   global current
    while current<21: 
-     global current
      global videourls
      print "Current: "+str(current)
      print videos[current]
@@ -112,7 +112,7 @@ def youtube_search(options):
 
 
 if __name__ == "__main__":
-  argparser.add_argument("--q", help="Search term", default="Google")
+  argparser.add_argument("--q", help="Search term", default="amazing spiderman trailer")
   argparser.add_argument("--max-results", help="Max results", default=25)
   args = argparser.parse_args()
 
