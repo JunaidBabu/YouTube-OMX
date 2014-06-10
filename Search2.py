@@ -17,6 +17,12 @@ YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
 current=0
 videourls = []
+
+def extract(raw_string, start_marker, end_marker):
+    start = raw_string.index(start_marker) + len(start_marker)
+    end = raw_string.index(end_marker, start)
+    return raw_string[start:end]
+
 def youtube_search(options):
   youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
     developerKey=DEVELOPER_KEY)
@@ -67,7 +73,7 @@ def youtube_search(options):
         videourls.append(output.strip())
         with open('list', 'wb') as f:
 	    pickle.dump(videourls, f)
-        print str(current)+" "+str(videourls)
+        #print str(current)+" "+str(videourls)
   #captureURL()
 
   print "Before process"
@@ -89,7 +95,14 @@ def youtube_search(options):
        video_urls = []
        with open('list', 'rb') as f:
 	  video_urls=pickle.load(f)
-       subprocess.call(["omxplayer", ''+video_urls[current]+''])
+       with open('log.txt', 'r') as f:
+	  logdata=f.read()
+       prevtime=extract(logdata, "Stopped at: ", "\n")
+       print "time :" + prevtime
+       res="1280 720 1850 1000"
+       op=subprocess.check_output(["omxplayer", ''+video_urls[current]+'', "--win", res, "-l", prevtime])
+       with open("log.txt", "wb") as myfile:
+	   myfile.write(op)
        current=current+1
      except Exception,e:
        print "Some error"+str(e)
